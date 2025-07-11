@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Container, TextField, Button, Grid, Typography, Box } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  Grid,
+  Typography,
+  Box,
+  Link,
+} from "@mui/material";
 import axios from "axios";
 import { Log } from "./utils/logger";
 
@@ -16,7 +24,10 @@ function App() {
 
   const addUrlInput = () => {
     if (urls.length < 5) {
-      setUrls([...urls, { url: "", validity: "", shortcode: "", result: null }]);
+      setUrls([
+        ...urls,
+        { url: "", validity: "", shortcode: "", result: null },
+      ]);
     }
   };
 
@@ -28,7 +39,12 @@ function App() {
 
       // Basic validation
       if (!url || !url.startsWith("http")) {
-        await Log("frontend", "warn", "validation", `Invalid URL at index ${i}`);
+        await Log(
+          "frontend",
+          "warn",
+          "validation",
+          `Invalid URL at index ${i}`
+        );
         newUrls[i].result = { error: "Invalid URL" };
         continue;
       }
@@ -41,19 +57,40 @@ function App() {
         });
 
         newUrls[i].result = res.data;
-        await Log("frontend", "info", "shortener", `URL shortened at index ${i}`);
+        await Log(
+          "frontend",
+          "info",
+          "shortener",
+          `URL shortened at index ${i}`
+        );
       } catch (err) {
-        newUrls[i].result = { error: err.response?.data?.error || "Error" };
-        await Log("frontend", "error", "shortener", `Failed at index ${i}: ${err.message}`);
+        newUrls[i].result = {
+          error: err.response?.data?.error || "Error",
+        };
+        await Log(
+          "frontend",
+          "error",
+          "shortener",
+          `Failed at index ${i}: ${err.message}`
+        );
       }
     }
 
     setUrls(newUrls);
   };
 
+  const handleCopy = (shortUrl) => {
+    if (!shortUrl) return;
+    navigator.clipboard.writeText(shortUrl);
+    alert("Short URL copied to clipboard!");
+  };
+
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>URL Shortener</Typography>
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        URL Shortener
+      </Typography>
+
       {urls.map((entry, i) => (
         <Box key={i} mb={3}>
           <Grid container spacing={2}>
@@ -81,20 +118,57 @@ function App() {
                 onChange={(e) => handleChange(i, "shortcode", e.target.value)}
               />
             </Grid>
+
             <Grid item xs={12} md={2}>
-              {entry.result && (
-                <Typography variant="body2">
-                  {entry.result.error
-                    ? `Error: ${entry.result.error}`
-                    : `Short URL: ${entry.result.shortLink}`}
+              {entry.result && entry.result.error ? (
+                <Typography variant="body2" color="error">
+                  Error: {entry.result.error}
                 </Typography>
+              ) : (
+                entry.result?.shortLink && (
+                  <>
+                    <Typography
+                      variant="body2"
+                      gutterBottom
+                      sx={{ color: "text.primary" }}
+                    >
+                      Short URL:{" "}
+                      <Link
+                        href={entry.result.shortLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          color: "primary.light",
+                          wordBreak: "break-word",
+                          display: "inline-block",
+                        }}
+                      >
+                        {entry.result.shortLink}
+                      </Link>
+                    </Typography>
+
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => handleCopy(entry.result.shortLink)}
+                      sx={{ mt: 1 }}
+                    >
+                      Copy
+                    </Button>
+                  </>
+                )
               )}
             </Grid>
           </Grid>
         </Box>
       ))}
 
-      <Button variant="outlined" onClick={addUrlInput} disabled={urls.length >= 5}>
+      <Button
+        variant="outlined"
+        onClick={addUrlInput}
+        disabled={urls.length >= 5}
+      >
         Add URL
       </Button>
 
