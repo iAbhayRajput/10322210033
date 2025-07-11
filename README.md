@@ -42,9 +42,10 @@ This repository contains a full-stack application built for the Affordmed/Afrio 
 
 ## UI Screenshot
 
-> 🖼️ Insert your final UI screenshot below:
+> Heres How final UI looks:
 
-![UI Screenshot](./screenshots/ui.png)
+<img width="284" height="477" alt="ui" src="https://github.com/user-attachments/assets/767a4da0-aff8-4528-b83d-eccf4dc755c8" />
+
 
 ---
 
@@ -112,6 +113,22 @@ http://localhost:8000/custom123
 Redirects user to the original long URL if the link is valid and not expired.
 
 ---
+---
+
+## API Status Codes
+
+| Endpoint                         | Status Code | Description                                                                 |
+|----------------------------------|-------------|-----------------------------------------------------------------------------|
+| **POST** `/shorturls`           | `201 Created` | Successfully created short URL                                              |
+|                                  | `400 Bad Request` | Invalid or missing `url` field                                              |
+|                                  | `409 Conflict`   | Shortcode already exists                                                    |
+|                                  | `500 Internal Server Error` | Unexpected error during creation                                |
+| **GET** `/shorturls/:shortcode` | `200 OK`    | Successfully retrieved short URL stats                                      |
+|                                  | `404 Not Found` | Shortcode does not exist                                                    |
+| **GET** `/:shortcode`           | `302 Found` | Successfully redirected to original URL                                     |
+|                                  | `404 Not Found` | Shortcode does not exist                                                    |
+|                                  | `410 Gone`   | Link has expired                                                            |
+
 
 ## Logging Middleware
 
@@ -137,7 +154,7 @@ await Log("frontend", "error", "validation", "Invalid URL entered");
 
 ---
 
-## Registration (Completed)
+## Registration was also done (Completed)
 
 - Registered at:
   ```
@@ -147,8 +164,6 @@ await Log("frontend", "error", "validation", "Invalid URL entered");
   - `clientID`
   - `clientSecret`
   - `access_token`
-- These were **not included** in the repo per Affordmed guidelines
-- Current APIs do **not require auth tokens**
 
 ---
 
